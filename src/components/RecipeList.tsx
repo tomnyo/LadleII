@@ -15,7 +15,7 @@ interface RecipeListProps {
 
 const RecipeList = ({ recipes }: RecipeListProps) => {
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
+    <div className="space-y-4 pb-8">
       {recipes.map((recipe) => (
         <RecipeCard
           key={recipe.id}

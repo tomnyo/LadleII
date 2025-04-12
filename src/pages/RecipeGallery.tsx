@@ -56,8 +56,8 @@ const RecipeGallery = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014]">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+      <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10">
         <div className="max-w-3xl mx-auto flex items-center">
           <div className="flex items-center text-orange-500 font-bold text-2xl">
             <img
@@ -77,7 +77,8 @@ const RecipeGallery = () => {
           </div>
         </div>
       </header>
-      <main className="max-w-3xl mx-auto p-4 flex flex-col">
+
+      <div className="sticky top-[72px] z-10 bg-gray-50 pt-4 pb-4 max-w-3xl mx-auto w-full px-4">
         <div className="mb-6">
           <h1 className="font-serif font-semibold text-[24px] leading-none tracking-[0%] text-[#1A1A1A] inline-block">
             Recipes{" "}
@@ -87,7 +88,37 @@ const RecipeGallery = () => {
           </span>
         </div>
 
-        <RecipeList recipes={recipes} />
+        <div className="mb-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search recipes..."
+              className="w-full h-[44px] rounded-[6px] border border-[#E5E5E5] py-[14px] px-[16px] pl-[40px] text-[14px] outline-none focus:border-[#7D4CDB] focus:border"
+            />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1 overflow-y-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <RecipeList recipes={recipes} />
+        </div>
       </main>
     </div>
   );
