@@ -1,6 +1,8 @@
 import { Clock, User, Instagram } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface RecipeCardProps {
+  id: number;
   title: string;
   cookTime: string;
   servings: number;
@@ -9,16 +11,24 @@ interface RecipeCardProps {
 }
 
 const RecipeCard = ({
+  id,
   title,
   cookTime,
   servings,
   description,
   imageUrl,
 }: RecipeCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/recipe/${id}`);
+  };
+
   return (
     <div
-      className="flex justify-between bg-white rounded-[6px] shadow-sm border border-gray-100 overflow-hidden mb-4 w-full"
+      className="flex justify-between bg-white rounded-[6px] shadow-sm border border-gray-100 overflow-hidden mb-4 w-full cursor-pointer"
       style={{ height: "171px", gap: "55px" }}
+      onClick={handleClick}
     >
       <div className="pl-[18px] pr-4 py-4 flex flex-col justify-between flex-grow overflow-hidden">
         <div>

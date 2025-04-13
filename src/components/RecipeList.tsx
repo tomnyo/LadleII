@@ -19,6 +19,7 @@ const RecipeList = ({ recipes }: RecipeListProps) => {
       {recipes.map((recipe) => (
         <RecipeCard
           key={recipe.id}
+          id={recipe.id}
           title={recipe.title}
           cookTime={recipe.cookTime}
           servings={recipe.servings}
