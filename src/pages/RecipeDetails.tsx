@@ -105,7 +105,10 @@ const RecipeDetails = () => {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[120px]">
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => navigate(`/edit-recipe/${id}`)}
+              >
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Edit</span>
               </DropdownMenuItem>

@@ -1,6 +1,8 @@
 import RecipeList from "../components/RecipeList";
+import { useNavigate } from "react-router-dom";
 
 const RecipeGallery = () => {
+  const navigate = useNavigate();
   // Sample recipe data
   const recipes = [
     {
@@ -94,6 +96,8 @@ const RecipeGallery = () => {
               type="text"
               placeholder="Search recipes..."
               className="w-full h-[44px] rounded-[6px] border border-[#E5E5E5] py-[14px] px-[16px] pl-[40px] text-[14px] outline-none focus:border-[#7D4CDB] focus:border"
+              onClick={() => navigate("/search")}
+              readOnly
             />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <svg
