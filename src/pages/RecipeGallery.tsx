@@ -1,8 +1,12 @@
 import RecipeList from "../components/RecipeList";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Edit, Camera, Link, Sparkles } from "lucide-react";
 
 const RecipeGallery = () => {
   const navigate = useNavigate();
+  const [isSubButtonsVisible, setIsSubButtonsVisible] = useState(false);
+
   // Sample recipe data
   const recipes = [
     {
@@ -57,8 +61,26 @@ const RecipeGallery = () => {
     },
   ];
 
+  const toggleSubButtons = () => {
+    setIsSubButtonsVisible(!isSubButtonsVisible);
+  };
+
+  const handleSubButtonClick = (action: string) => {
+    console.log(`${action} clicked`);
+    setIsSubButtonsVisible(false);
+  };
+
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden relative">
+      {/* Background dim overlay */}
+      {isSubButtonsVisible && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out z-20"
+          onClick={toggleSubButtons}
+          aria-hidden="true"
+        />
+      )}
+
       <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10">
         <div className="max-w-3xl mx-auto flex items-center">
           <div className="flex items-center text-orange-500 font-bold text-2xl">
@@ -80,7 +102,7 @@ const RecipeGallery = () => {
         </div>
       </header>
 
-      <div className="sticky top-[72px] z-10 bg-gray-50 pt-4 pb-4 max-w-3xl mx-auto w-full px-4">
+      <div className="sticky top-[72px] bg-gray-50 pt-4 pb-4 max-w-3xl mx-auto w-full px-4">
         <div className="mb-6">
           <h1 className="font-serif font-semibold text-[24px] leading-none tracking-[0%] text-[#1A1A1A] inline-block">
             Recipes{" "}
@@ -119,11 +141,116 @@ const RecipeGallery = () => {
         </div>
       </div>
 
-      <main className="flex-1 overflow-y-auto px-4">
+      <main className="flex-1 overflow-y-auto px-4 relative">
         <div className="max-w-3xl mx-auto">
           <RecipeList recipes={recipes} />
         </div>
       </main>
+
+      {/* Floating Add Recipe Button with Sub-buttons */}
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end">
+        {/* Sub-buttons container */}
+        {isSubButtonsVisible && (
+          <div className="flex flex-col-reverse gap-4 mb-4 items-end">
+            {/* Write from scratch */}
+            <div className="flex items-center">
+              <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
+                Write from scratch
+              </span>
+              <button
+                className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+                onClick={() => handleSubButtonClick("Write from scratch")}
+                aria-label="Write from scratch"
+              >
+                <Edit size={24} />
+              </button>
+            </div>
+
+            {/* Add from photo */}
+            <div className="flex items-center">
+              <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
+                Upload a photo
+              </span>
+              <button
+                className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+                onClick={() => handleSubButtonClick("Add from photo")}
+                aria-label="Add from photo"
+              >
+                <Camera size={24} />
+              </button>
+            </div>
+
+            {/* Add recipe link */}
+            <div className="flex items-center">
+              <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
+                Add via link
+              </span>
+              <button
+                className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+                onClick={() => handleSubButtonClick("Add recipe link")}
+                aria-label="Add recipe link"
+              >
+                <Link size={24} />
+              </button>
+            </div>
+
+            {/* AI Generate Recipe */}
+            <div className="flex items-center">
+              <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
+                Add with AI
+              </span>
+              <button
+                className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+                onClick={() => handleSubButtonClick("AI Generate Recipe")}
+                aria-label="AI Generate Recipe"
+              >
+                <Sparkles size={24} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Main Add Recipe Button */}
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+          aria-label="Add recipe"
+          onClick={toggleSubButtons}
+        >
+          {isSubButtonsVisible ? (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6L6 18M6 6L18 18"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 5v14m-7-7h14"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 };
