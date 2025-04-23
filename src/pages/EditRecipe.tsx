@@ -205,7 +205,9 @@ const EditRecipe = () => {
   const handleSave = () => {
     // In a real app, you would save the data to your backend here
     console.log("Saving recipe:", formData);
-    navigate(`/recipe/${id}`);
+    // Navigate to recipe details page and replace the current history entry
+    // This prevents the back button from returning to the edit page
+    navigate(`/recipe/${id}`, { replace: true });
   };
 
   const handleCancel = () => {
@@ -407,7 +409,7 @@ const EditRecipe = () => {
                           }
                         }}
                       >
-                        <img src="/plus.svg" alt="+" className="w-5 h-5" />
+                        <img src="/plus.svg" alt="+" className="w-5 h-5 flex" />
                       </button>
                     </div>
                   </div>

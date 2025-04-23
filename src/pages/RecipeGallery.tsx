@@ -124,6 +124,31 @@ const RecipeGallery = () => {
           <RecipeList recipes={recipes} />
         </div>
       </main>
+
+      {/* Floating Add Recipe Button */}
+      <div className="fixed bottom-6 right-6 z-20">
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
+          aria-label="Add recipe"
+          onClick={() => console.log("Add recipe clicked")}
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 5V19M5 12H19"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 };

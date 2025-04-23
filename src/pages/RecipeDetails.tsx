@@ -88,7 +88,7 @@ const RecipeDetails = () => {
       <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10 h-16">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="p-2 rounded-full hover:bg-gray-100"
           >
             <ArrowLeft className="h-5 w-5 text-gray-600" />
