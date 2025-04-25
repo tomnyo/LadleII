@@ -2,10 +2,12 @@ import RecipeList from "../components/RecipeList";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Edit, Camera, Link, Sparkles } from "lucide-react";
+import AddViaLinkModal from "../components/AddViaLinkModal";
 
 const RecipeGallery = () => {
   const navigate = useNavigate();
   const [isSubButtonsVisible, setIsSubButtonsVisible] = useState(false);
+  const [isAddViaLinkModalOpen, setIsAddViaLinkModalOpen] = useState(false);
 
   // Sample recipe data
   const recipes = [
@@ -68,6 +70,16 @@ const RecipeGallery = () => {
   const handleSubButtonClick = (action: string) => {
     console.log(`${action} clicked`);
     setIsSubButtonsVisible(false);
+
+    if (action === "Add recipe link") {
+      setIsAddViaLinkModalOpen(true);
+    }
+  };
+
+  const handleAddViaLinkSubmit = (link: string) => {
+    console.log("Recipe link submitted:", link);
+    // Here you would process the link to extract recipe data
+    setIsAddViaLinkModalOpen(false);
   };
 
   return (
@@ -194,19 +206,7 @@ const RecipeGallery = () => {
               </button>
             </div>
 
-            {/* AI Generate Recipe */}
-            <div className="flex items-center">
-              <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
-                Add with AI
-              </span>
-              <button
-                className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
-                onClick={() => handleSubButtonClick("AI Generate Recipe")}
-                aria-label="AI Generate Recipe"
-              >
-                <Sparkles size={24} />
-              </button>
-            </div>
+            {/* AI Generate Recipe - Hidden for now */}
           </div>
         )}
 
@@ -251,6 +251,13 @@ const RecipeGallery = () => {
           )}
         </button>
       </div>
+
+      {/* Add via Link Modal */}
+      <AddViaLinkModal
+        isOpen={isAddViaLinkModalOpen}
+        onClose={() => setIsAddViaLinkModalOpen(false)}
+        onSubmit={handleAddViaLinkSubmit}
+      />
     </div>
   );
 };
