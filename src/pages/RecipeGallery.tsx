@@ -78,7 +78,7 @@ const RecipeGallery = () => {
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = "image/*";
-      fileInput.capture = "environment"; // Use the back camera on mobile devices
+      // Important: Do NOT set the capture attribute at all to allow both camera and gallery access
 
       // Handle file selection
       fileInput.onchange = (e) => {
@@ -190,7 +190,10 @@ const RecipeGallery = () => {
               </span>
               <button
                 className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
-                onClick={() => handleSubButtonClick("Write from scratch")}
+                onClick={() => {
+                  setIsSubButtonsVisible(false);
+                  navigate("/create-recipe");
+                }}
                 aria-label="Write from scratch"
               >
                 <Edit size={24} />
@@ -200,7 +203,7 @@ const RecipeGallery = () => {
             {/* Add from photo */}
             <div className="flex items-center">
               <span className="text-gray-700 mr-2 text-sm font-medium bg-white px-2 py-1 rounded-md shadow-sm">
-                Upload a photo
+                Upload a photo/image
               </span>
               <button
                 className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"

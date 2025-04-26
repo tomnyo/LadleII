@@ -6,6 +6,8 @@ import {
   Instagram,
   Pencil,
   Trash2,
+  Share,
+  Send,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
@@ -21,11 +23,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion";
+import ShareRecipeModal from "../components/ShareRecipeModal";
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const recipeUrl = window.location.href;
 
   // Sample recipe data - in a real app, this would be fetched based on the ID
   const recipe = {
@@ -85,6 +90,11 @@ const RecipeDetails = () => {
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+      <ShareRecipeModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        recipeUrl={recipeUrl}
+      />
       <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10 h-16">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button
@@ -98,26 +108,38 @@ const RecipeDetails = () => {
             {recipe.title}
           </h1>
 
-          <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-            <DropdownMenuTrigger asChild>
-              <button className="p-2 rounded-full hover:bg-gray-100">
-                <MoreHorizontal className="h-5 w-5 text-gray-600" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[120px]">
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => navigate(`/edit-recipe/${id}`)}
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                <span>Edit</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer text-red-500">
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Delete</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex gap-2">
+            <button
+              className="p-2 rounded-full hover:bg-gray-100"
+              onClick={() => setIsShareModalOpen(true)}
+            >
+              <Send className="h-5 w-5 text-gray-600" />
+            </button>
+
+            <DropdownMenu
+              open={isDropdownOpen}
+              onOpenChange={setIsDropdownOpen}
+            >
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 rounded-full hover:bg-gray-100">
+                  <MoreHorizontal className="h-5 w-5 text-gray-600" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[120px]">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/edit-recipe/${id}`)}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  <span>Edit</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-red-500">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </header>
       <main className="flex-1 overflow-y-auto">

@@ -1,6 +1,6 @@
 import { ArrowLeft, Check, X, Clock, User, Camera } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -29,68 +29,37 @@ interface RecipeFormData {
   steps: Step[];
 }
 
-const EditRecipe = () => {
-  const { id } = useParams<{ id: string }>();
+const CreateRecipe = () => {
   const navigate = useNavigate();
 
-  // Sample recipe data - in a real app, this would be fetched based on the ID
+  // Initialize recipe data for creating from scratch
   const [formData, setFormData] = useState<RecipeFormData>({
-    title: "Pasta Carbonara",
-    cookTime: "45 minutes",
-    servings: 4,
-    description:
-      "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and oh-so-delicious—ready in minutes but tastes like a gourmet masterpiece. 🍝🥓 #CarbonaraLovers #FoodieGram #EasyRecipes #PastaNight #SoulFood",
+    title: "",
+    cookTime: "30 minutes",
+    servings: 2,
+    description: "",
     imageUrl:
-      "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800&q=80",
+      "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&q=80",
     ingredients: [
-      { id: 1, name: "220g spaghetti" },
-      { id: 2, name: "50g pecorino" },
-      { id: 3, name: "4 egg yolks" },
-      { id: 4, name: "80g guanciale" },
-      { id: 5, name: "Salt to taste" },
-      { id: 6, name: "Pepper as needed" },
-      { id: 7, name: "Add water as needed" },
+      { id: 1, name: "" },
+      { id: 2, name: "" },
     ],
     steps: [
       {
         id: 1,
-        title: "Getting started",
-        instructions: [
-          "Crack eggs into a bowl",
-          "Grate your cheese",
-          "Chop your bacon into small pieces",
-        ],
-      },
-      {
-        id: 2,
-        title: "Cooking the pasta",
-        instructions: [
-          "Boil water in a large pot",
-          "Add salt to the water",
-          "Cook pasta according to package instructions",
-        ],
-      },
-      {
-        id: 3,
-        title: "Preparing the sauce",
-        instructions: [
-          "Fry the bacon until crispy",
-          "Mix eggs, cheese, and pepper in a bowl",
-          "Reserve some pasta water",
-        ],
-      },
-      {
-        id: 4,
-        title: "Finishing",
-        instructions: [
-          "Drain pasta and return to pot",
-          "Add bacon and fat",
-          "Add egg mixture and stir quickly",
-          "Add pasta water if needed to create a creamy sauce",
-        ],
+        title: "Step 1",
+        instructions: [""],
       },
     ],
   });
+
+  // Update formData when imageUrl changes if needed
+  useEffect(() => {
+    // Any side effects that need to happen after component mounts
+    return () => {
+      // Cleanup function if needed
+    };
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -204,14 +173,15 @@ const EditRecipe = () => {
 
   const handleSave = () => {
     // In a real app, you would save the data to your backend here
-    console.log("Saving recipe:", formData);
-    // Navigate to recipe details page and replace the current history entry
-    // This prevents the back button from returning to the edit page
-    navigate(`/recipe/${id}`, { replace: true });
+    console.log("Saving new recipe:", formData);
+    // Generate a temporary ID for the new recipe
+    const newId = Date.now();
+    // Navigate to recipe details page
+    navigate(`/recipe/${newId}`, { replace: true });
   };
 
   const handleCancel = () => {
-    navigate(`/recipe/${id}`);
+    navigate("/");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -254,7 +224,7 @@ const EditRecipe = () => {
           </button>
 
           <h1 className="font-['Source_Serif_Pro'] font-semibold text-[24px] leading-[100%] tracking-[0%] text-center">
-            Edit recipe
+            Create recipe
           </h1>
 
           <div className="flex items-center gap-2">
@@ -287,6 +257,7 @@ const EditRecipe = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Recipe name"
               />
             </div>
 
@@ -298,7 +269,7 @@ const EditRecipe = () => {
               <div className="w-full h-[200px] bg-gray-200 rounded-lg overflow-hidden relative">
                 <img
                   src={formData.imageUrl}
-                  alt={formData.title}
+                  alt={formData.title || "Recipe image"}
                   className="w-full h-full object-cover"
                 />
                 <input
@@ -320,20 +291,7 @@ const EditRecipe = () => {
                     document.getElementById("recipe-image-upload")?.click();
                   }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-                    <circle cx="12" cy="13" r="3"></circle>
-                  </svg>
+                  <Camera size={20} />
                 </button>
               </div>
             </div>
@@ -498,6 +456,7 @@ const EditRecipe = () => {
                 onChange={handleInputChange}
                 rows={4}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Describe your recipe"
               />
             </div>
 
@@ -517,6 +476,7 @@ const EditRecipe = () => {
                         handleIngredientChange(ingredient.id, e.target.value)
                       }
                       className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Add ingredient"
                     />
                     <button
                       onClick={() => handleRemoveIngredient(ingredient.id)}
@@ -580,6 +540,7 @@ const EditRecipe = () => {
                               )
                             }
                             className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            placeholder="Add instruction"
                           />
                           <button
                             onClick={() =>
@@ -612,4 +573,4 @@ const EditRecipe = () => {
   );
 };
 
-export default EditRecipe;
+export default CreateRecipe;
