@@ -73,6 +73,25 @@ const RecipeGallery = () => {
 
     if (action === "Add recipe link") {
       setIsAddViaLinkModalOpen(true);
+    } else if (action === "Upload a photo") {
+      // Create a file input element
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.capture = "environment"; // Use the back camera on mobile devices
+
+      // Handle file selection
+      fileInput.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          console.log("Photo selected:", file.name);
+          // Here you would process the image file
+          // For example, upload it to a server or extract recipe data
+        }
+      };
+
+      // Trigger the file input click
+      fileInput.click();
     }
   };
 
@@ -87,7 +106,7 @@ const RecipeGallery = () => {
       {/* Background dim overlay */}
       {isSubButtonsVisible && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out z-20"
+          className="fixed inset-0 bg-black bg-opacity-30 transition-opacity duration-300 ease-in-out z-20"
           onClick={toggleSubButtons}
           aria-hidden="true"
         />
@@ -185,7 +204,7 @@ const RecipeGallery = () => {
               </span>
               <button
                 className="bg-white hover:bg-gray-50 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-colors duration-200"
-                onClick={() => handleSubButtonClick("Add from photo")}
+                onClick={() => handleSubButtonClick("Upload a photo")}
                 aria-label="Add from photo"
               >
                 <Camera size={24} />
