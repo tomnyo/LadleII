@@ -33,7 +33,7 @@ export default function AddViaLinkModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose} className="bg-black/30">
       <DialogContent className="sm:max-w-md mx-auto max-w-[90%]">
         <DialogHeader>
           <DialogTitle>Add recipe via link</DialogTitle>
@@ -41,7 +41,8 @@ export default function AddViaLinkModal({
         <div className="flex flex-col space-y-4 py-4">
           <div className="flex flex-col space-y-2">
             <p className="text-sm text-muted-foreground">
-              Paste a link to a recipe you'd like to import
+              Paste a link to a recipe. Import from anwhere, including social
+              media.
             </p>
             <Input
               placeholder="https://example.com/recipe"
@@ -55,7 +56,7 @@ export default function AddViaLinkModal({
           <Button
             variant="outline"
             onClick={handleClose}
-            className="bg-[#F0F0F0] border border-[#D1D5DB]"
+            className="bg-[#F0F0F0] border border-[#D1D5DB] font-[Inter]"
           >
             Cancel
           </Button>

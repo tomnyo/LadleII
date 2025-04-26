@@ -87,7 +87,7 @@ const RecipeGallery = () => {
       {/* Background dim overlay */}
       {isSubButtonsVisible && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out z-20"
+          className="fixed inset-0 bg-black bg-opacity-30 transition-opacity duration-300 ease-in-out z-20"
           onClick={toggleSubButtons}
           aria-hidden="true"
         />
