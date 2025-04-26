@@ -1,6 +1,6 @@
-import { ArrowLeft, Check, X, Clock, User } from "lucide-react";
+import { ArrowLeft, Check, X, Clock, User, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -32,7 +32,7 @@ interface RecipeFormData {
 const CreateRecipe = () => {
   const navigate = useNavigate();
 
-  // Empty recipe data for creating from scratch
+  // Initialize recipe data for creating from scratch
   const [formData, setFormData] = useState<RecipeFormData>({
     title: "",
     cookTime: "30 minutes",
@@ -52,6 +52,14 @@ const CreateRecipe = () => {
       },
     ],
   });
+
+  // Update formData when imageUrl changes if needed
+  useEffect(() => {
+    // Any side effects that need to happen after component mounts
+    return () => {
+      // Cleanup function if needed
+    };
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -176,6 +184,34 @@ const CreateRecipe = () => {
     navigate("/");
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFormData((prev) => ({
+            ...prev,
+            imageUrl: event.target.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10 h-16">
@@ -236,21 +272,26 @@ const CreateRecipe = () => {
                   alt={formData.title || "Recipe image"}
                   className="w-full h-full object-cover"
                 />
-                <button className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-                    <circle cx="12" cy="13" r="3"></circle>
-                  </svg>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="recipe-image-upload"
+                  className="hidden"
+                  onChange={handleImageChange}
+                  capture={
+                    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+                      ? "environment"
+                      : undefined
+                  }
+                />
+                <button
+                  className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("recipe-image-upload")?.click();
+                  }}
+                >
+                  <Camera size={20} />
                 </button>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, X, Clock, User } from "lucide-react";
+import { ArrowLeft, Check, X, Clock, User, Camera } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -214,6 +214,34 @@ const EditRecipe = () => {
     navigate(`/recipe/${id}`);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFormData((prev) => ({
+            ...prev,
+            imageUrl: event.target.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       <header className="bg-white p-4 shadow-[0px_2px_6px_0px_#00000014] sticky top-0 z-10 h-16">
@@ -273,7 +301,25 @@ const EditRecipe = () => {
                   alt={formData.title}
                   className="w-full h-full object-cover"
                 />
-                <button className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="recipe-image-upload"
+                  className="hidden"
+                  onChange={handleImageChange}
+                  capture={
+                    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+                      ? "environment"
+                      : undefined
+                  }
+                />
+                <button
+                  className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("recipe-image-upload")?.click();
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
