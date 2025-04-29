@@ -1,6 +1,7 @@
 import { ArrowLeft, Check, X, Clock, User, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { createRecipe, RecipeCreateData } from "../api/createRecipe";
 import {
   Accordion,
   AccordionContent,
@@ -171,13 +172,35 @@ const CreateRecipe = () => {
     }));
   };
 
-  const handleSave = () => {
-    // In a real app, you would save the data to your backend here
-    console.log("Saving new recipe:", formData);
-    // Generate a temporary ID for the new recipe
-    const newId = Date.now();
-    // Navigate to recipe details page
-    navigate(`/recipe/${newId}`, { replace: true });
+  const handleSave = async () => {
+    try {
+      // Format the data according to the new schema
+      const recipeData: RecipeCreateData = {
+        title: formData.title || "Untitled Recipe",
+        description: formData.description || "No description provided",
+        cooking_time: parseInt(formData.cookTime.match(/\d+/)[0]), // Extract the number from cookTime
+        servings: formData.servings,
+        image_url: formData.imageUrl,
+        source_url: window.location.href, // Using current URL as source
+        ingredients: formData.ingredients
+          .map((ing) => ing.name)
+          .filter((name) => name.trim() !== ""),
+        instructions: formData.steps.map((step) => ({
+          title: step.title,
+          steps: step.instructions.filter((instr) => instr.trim() !== ""),
+        })),
+      };
+
+      // Send the data to the API
+      const result = await createRecipe(recipeData);
+      console.log("Recipe created successfully:", result);
+
+      // Navigate to recipe details page
+      navigate(`/recipe/${result.uuid}`, { replace: true });
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      alert("Failed to save recipe. Please try again.");
+    }
   };
 
   const handleCancel = () => {

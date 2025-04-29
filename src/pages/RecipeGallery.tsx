@@ -97,7 +97,7 @@ const RecipeGallery = () => {
 
   const handleAddViaLinkSubmit = (link: string) => {
     console.log("Recipe link submitted:", link);
-    // Here you would process the link to extract recipe data
+    // The extraction is handled in the modal component
     setIsAddViaLinkModalOpen(false);
   };
 

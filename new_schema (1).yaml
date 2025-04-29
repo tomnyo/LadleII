@@ -1,0 +1,566 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/recipe/:
+    get:
+      operationId: recipe_list
+      tags:
+      - recipe
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+          description: ''
+    post:
+      operationId: recipe_create
+      description: Create a new recipe
+      tags:
+      - recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+  /api/recipe/{uuid}/:
+    get:
+      operationId: recipe_retrieve
+      description: Retrieve a recipe by UUID
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recipe.
+        required: true
+      tags:
+      - recipe
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+    put:
+      operationId: recipe_update
+      description: Update a recipe
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recipe.
+        required: true
+      tags:
+      - recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+    patch:
+      operationId: recipe_partial_update
+      description: Partially update a recipe
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recipe.
+        required: true
+      tags:
+      - recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipe'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+    delete:
+      operationId: recipe_destroy
+      description: Delete a recipe
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this recipe.
+        required: true
+      tags:
+      - recipe
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/recipe/extract/:
+    post:
+      operationId: recipe_extract_create
+      tags:
+      - recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerExtractionInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TriggerExtractionInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TriggerExtractionInput'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+  /api/recipe/extraction-status/{extraction_id}/:
+    get:
+      operationId: recipe_extraction_status_retrieve
+      description: Get the current status of an extraction
+      summary: Get extraction status
+      parameters:
+      - in: path
+        name: extraction_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - recipe
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: Returns the current status of the extraction
+        '404':
+          description: Extraction not found
+  /api/recipe/update-extraction-status/:
+    post:
+      operationId: recipe_update_extraction_status_create
+      description: Update extraction status and create recipe if successful
+      summary: Update extraction status
+      tags:
+      - recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExtractionStatusRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateExtractionStatusRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateExtractionStatusRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExtractionStatusResponse'
+          description: Status updated successfully
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExtractionStatusResponse'
+          description: Recipe created successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExtractionStatusResponse'
+          description: Invalid request data
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExtractionStatusResponse'
+          description: Processing error
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    PatchedRecipe:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        source_url:
+          type: string
+          format: uri
+          maxLength: 2048
+        title:
+          type: string
+        description:
+          type: string
+        ingredients: {}
+        instructions: {}
+        cooking_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        servings:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        image_url:
+          type: string
+          format: uri
+          maxLength: 2048
+        author_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+    Recipe:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        source_url:
+          type: string
+          format: uri
+          maxLength: 2048
+        title:
+          type: string
+        description:
+          type: string
+        ingredients: {}
+        instructions: {}
+        cooking_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        servings:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        image_url:
+          type: string
+          format: uri
+          maxLength: 2048
+        author_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - cooking_time
+      - created_at
+      - created_by
+      - description
+      - image_url
+      - ingredients
+      - instructions
+      - servings
+      - source_url
+      - title
+      - uuid
+    TriggerExtractionInput:
+      type: object
+      properties:
+        source_url:
+          type: string
+          format: uri
+      required:
+      - source_url
+    UpdateExtractionStatusRequest:
+      type: object
+      properties:
+        extraction_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/UpdateExtractionStatusRequestStatusEnum'
+        error_message:
+          type: string
+        recipe: {}
+      required:
+      - extraction_id
+      - status
+    UpdateExtractionStatusRequestStatusEnum:
+      enum:
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `completed` - completed
+        * `failed` - failed
+    UpdateExtractionStatusResponse:
+      type: object
+      properties:
+        extraction_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/UpdateExtractionStatusResponseStatusEnum'
+        message:
+          type: string
+        recipe:
+          $ref: '#/components/schemas/Recipe'
+      required:
+      - extraction_id
+      - message
+      - status
+    UpdateExtractionStatusResponseStatusEnum:
+      enum:
+      - success
+      - error
+      type: string
+      description: |-
+        * `success` - success
+        * `error` - error
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
