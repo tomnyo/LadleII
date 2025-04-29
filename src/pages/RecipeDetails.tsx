@@ -10,7 +10,7 @@ import {
   Send,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import {
   AccordionTrigger,
 } from "../components/ui/accordion";
 import ShareRecipeModal from "../components/ShareRecipeModal";
+import { getRecipe } from "../api/getRecipe";
 
 const RecipeDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,9 +32,11 @@ const RecipeDetails = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const recipeUrl = window.location.href;
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Sample recipe data - in a real app, this would be fetched based on the ID
-  const recipe = {
+  // Sample recipe data as fallback
+  const [recipe, setRecipe] = useState({
     id: 1,
     title: "Pasta Carbonara",
     cookTime: "45 minutes",
@@ -51,10 +54,10 @@ const RecipeDetails = () => {
       "Pepper as needed",
       "Add water as needed",
     ],
-    steps: [
+    instructions: [
       {
         title: "Getting started",
-        instructions: [
+        steps: [
           "Crack eggs into a bowl",
           "Grate your cheese",
           "Chop your bacon into small pieces",
@@ -62,7 +65,7 @@ const RecipeDetails = () => {
       },
       {
         title: "Cooking the pasta",
-        instructions: [
+        steps: [
           "Boil water in a large pot",
           "Add salt to the water",
           "Cook pasta according to package instructions",
@@ -70,7 +73,7 @@ const RecipeDetails = () => {
       },
       {
         title: "Preparing the sauce",
-        instructions: [
+        steps: [
           "Fry the bacon until crispy",
           "Mix eggs, cheese, and pepper in a bowl",
           "Reserve some pasta water",
@@ -78,7 +81,7 @@ const RecipeDetails = () => {
       },
       {
         title: "Finishing",
-        instructions: [
+        steps: [
           "Drain pasta and return to pot",
           "Add bacon and fat",
           "Add egg mixture and stir quickly",
@@ -86,10 +89,59 @@ const RecipeDetails = () => {
         ],
       },
     ],
-  };
+  });
+
+  // Fetch recipe data when component mounts
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      if (!id) {
+        setError("Recipe ID not found");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const data = await getRecipe(id);
+
+        // Format the data to match our component's expected structure
+        setRecipe({
+          id: id,
+          title: data.title,
+          cookTime: `${data.cooking_time} minutes`,
+          servings: data.servings,
+          description: data.description,
+          imageUrl: data.image_url,
+          ingredients: data.ingredients,
+          instructions: data.instructions,
+        });
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching recipe:", err);
+        setError("Failed to load recipe. Using sample data instead.");
+        setIsLoading(false);
+        // Keep using the sample data as fallback
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <p className="text-lg">Loading recipe...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+      {error && (
+        <div className="bg-yellow-50 p-2 text-center text-yellow-800 text-sm">
+          {error}
+        </div>
+      )}
       <ShareRecipeModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
@@ -105,7 +157,7 @@ const RecipeDetails = () => {
           </button>
 
           <h1 className="font-['Source_Serif_Pro'] font-semibold text-[24px] leading-[100%] tracking-[0%] text-center">
-            {recipe.title}
+            {recipe?.title || "Recipe Details"}
           </h1>
 
           <div className="flex gap-2">
@@ -146,11 +198,13 @@ const RecipeDetails = () => {
         <div className="max-w-3xl mx-auto pb-8 pt-4">
           <div className="max-w-3xl mx-auto px-4">
             <div className="w-full h-[300px] bg-gray-200 rounded-lg overflow-hidden">
-              <img
-                src={recipe.imageUrl}
-                alt={recipe.title}
-                className="w-full h-full object-cover"
-              />
+              {recipe?.imageUrl && (
+                <img
+                  src={recipe.imageUrl}
+                  alt={recipe.title || "Recipe image"}
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
           </div>
 
@@ -159,13 +213,13 @@ const RecipeDetails = () => {
               <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4" color="#4A4A4A" />
                 <span className="font-inter font-normal text-[12px] leading-[100%] tracking-[0%] text-[#4A4A4A]">
-                  {recipe.cookTime}
+                  {recipe?.cookTime || "N/A"}
                 </span>
               </div>
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" color="#4A4A4A" />
                 <span className="font-inter font-normal text-[12px] leading-[100%] tracking-[0%] text-[#4A4A4A]">
-                  {recipe.servings} Servings
+                  {recipe?.servings || 0} Servings
                 </span>
               </div>
               <div className="flex items-center gap-1 ml-auto">
@@ -177,7 +231,7 @@ const RecipeDetails = () => {
             </div>
 
             <p className="mb-6 font-inter font-normal text-[12px] leading-[150%] text-gray-700">
-              {recipe.description}
+              {recipe?.description || "No description available"}
             </p>
 
             <Accordion
@@ -191,11 +245,11 @@ const RecipeDetails = () => {
                 </AccordionTrigger>
                 <AccordionContent>
                   <ul className="list-disc pl-6 space-y-2">
-                    {recipe.ingredients.map((ingredient, index) => (
+                    {recipe?.ingredients?.map((ingredient, index) => (
                       <li key={index} className="font-inter text-[12px]">
                         {ingredient}
                       </li>
-                    ))}
+                    )) || <li>No ingredients available</li>}
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -205,21 +259,21 @@ const RecipeDetails = () => {
                   Step by step
                 </AccordionTrigger>
                 <AccordionContent>
-                  {recipe.steps.map((step, stepIndex) => (
+                  {recipe?.instructions?.map((section, stepIndex) => (
                     <div key={stepIndex} className="mb-4">
-                      <h3 className="text-[12px] mb-2 font-bold">{`${stepIndex + 1}. ${step.title}`}</h3>
+                      <h3 className="text-[12px] mb-2 font-bold">{`${stepIndex + 1}. ${section.title}`}</h3>
                       <ul className="list-disc pl-6 space-y-2">
-                        {step.instructions.map((instruction, instrIndex) => (
+                        {section.steps?.map((step, instrIndex) => (
                           <li
                             key={instrIndex}
                             className="font-inter text-[12px]"
                           >
-                            {instruction}
+                            {step}
                           </li>
                         ))}
                       </ul>
                     </div>
-                  ))}
+                  )) || <div>No instructions available</div>}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

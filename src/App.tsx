@@ -11,17 +11,15 @@ import routes from "tempo-routes";
 function App() {
   return (
     <Suspense fallback={<p>Loading...</p>}>
-      <>
-        <Routes>
-          <Route path="/" element={<RecipeGallery />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/recipe/:id" element={<RecipeDetails />} />
-          <Route path="/edit-recipe/:id" element={<EditRecipe />} />
-          <Route path="/create-recipe" element={<CreateRecipe />} />
-          <Route path="/search" element={<Search />} />
-        </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
+      {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+      <Routes>
+        <Route path="/" element={<RecipeGallery />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} />
+        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+        <Route path="/create-recipe" element={<CreateRecipe />} />
+        <Route path="/search" element={<Search />} />
+      </Routes>
     </Suspense>
   );
 }

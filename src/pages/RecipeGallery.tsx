@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Edit, Camera, Link, Sparkles } from "lucide-react";
 import AddViaLinkModal from "../components/AddViaLinkModal";
+import RecipeCard from "../components/RecipeCard";
 
 const RecipeGallery = () => {
   const navigate = useNavigate();
@@ -101,6 +102,32 @@ const RecipeGallery = () => {
     setIsAddViaLinkModalOpen(false);
   };
 
+  // Custom recipe list component that overrides the default navigation
+  const CustomRecipeList = ({ recipes }) => {
+    const navigate = useNavigate();
+
+    const handleRecipeClick = () => {
+      navigate("/recipe/287ea1dd-4d38-44af-8513-4eab31c74796");
+    };
+
+    return (
+      <div className="space-y-4 pb-8">
+        {recipes.map((recipe) => (
+          <div key={recipe.id} onClick={handleRecipeClick}>
+            <RecipeCard
+              id={recipe.id}
+              title={recipe.title}
+              cookTime={recipe.cookTime}
+              servings={recipe.servings}
+              description={recipe.description}
+              imageUrl={recipe.imageUrl}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden relative">
       {/* Background dim overlay */}
@@ -174,7 +201,7 @@ const RecipeGallery = () => {
 
       <main className="flex-1 overflow-y-auto px-4 relative">
         <div className="max-w-3xl mx-auto">
-          <RecipeList recipes={recipes} />
+          <CustomRecipeList recipes={recipes} />
         </div>
       </main>
 
