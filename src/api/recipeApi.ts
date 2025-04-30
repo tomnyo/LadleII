@@ -3,9 +3,36 @@
  */
 import { API_BASE_URL } from "../config/apiConfig";
 import { generateUUID } from "../utils/uuid";
+import { RecipeData } from "./getRecipe";
 
 // API Key for authentication
 const API_KEY = "os5rLyTzFwt5cfioD1025o16PNQ5Wx1F";
+
+/**
+ * Retrieves all recipes
+ * @returns Promise with the recipes data
+ */
+export const getAllRecipes = async (): Promise<RecipeData[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/recipe/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-session-id": generateUUID(),
+        "x-api-key": API_KEY,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error retrieving recipes:", error);
+    throw error;
+  }
+};
 
 /**
  * Triggers an asynchronous recipe extraction from a URL

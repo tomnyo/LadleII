@@ -1,68 +1,60 @@
 import RecipeList from "../components/RecipeList";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, Camera, Link, Sparkles } from "lucide-react";
 import AddViaLinkModal from "../components/AddViaLinkModal";
 import RecipeCard from "../components/RecipeCard";
+import { getAllRecipes } from "../api/recipeApi";
+import { RecipeData } from "../api/getRecipe";
 
 const RecipeGallery = () => {
   const navigate = useNavigate();
   const [isSubButtonsVisible, setIsSubButtonsVisible] = useState(false);
   const [isAddViaLinkModalOpen, setIsAddViaLinkModalOpen] = useState(false);
+  const [recipes, setRecipes] = useState<
+    Array<{
+      id: string;
+      title: string;
+      cookTime: string;
+      servings: number;
+      description: string;
+      imageUrl: string;
+    }>
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Sample recipe data
-  const recipes = [
-    {
-      id: 1,
-      title: "Decadent Creamy Garlic Bacon Carbonara",
-      cookTime: "45 minutes",
-      servings: 4,
-      description:
-        "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and loaded with bacon.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=500&q=80",
-    },
-    {
-      id: 2,
-      title: "Pesto pasta",
-      cookTime: "45 minutes",
-      servings: 4,
-      description:
-        "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and loaded with bacon.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&q=80",
-    },
-    {
-      id: 3,
-      title: "Chickpea salad",
-      cookTime: "45 minutes",
-      servings: 4,
-      description:
-        "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and loaded with bacon.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80",
-    },
-    {
-      id: 4,
-      title: "Eggs on toast",
-      cookTime: "45 minutes",
-      servings: 4,
-      description:
-        "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and loaded with bacon.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500&q=80",
-    },
-    {
-      id: 5,
-      title: "Blueberry pancakes",
-      cookTime: "45 minutes",
-      servings: 4,
-      description:
-        "The ultimate comfort food: Pasta Carbonara! Creamy, cheesy, and loaded with bacon.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=500&q=80",
-    },
-  ];
+  // Fetch recipes from API
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        setIsLoading(true);
+        const apiRecipes = await getAllRecipes();
+
+        // Transform API data to match the expected format for RecipeCard
+        const transformedRecipes = apiRecipes.map((recipe) => ({
+          id: recipe.uuid,
+          title: recipe.title,
+          cookTime: `${recipe.cooking_time} minutes`,
+          servings: recipe.servings,
+          description: recipe.description,
+          imageUrl: recipe.image_url,
+        }));
+
+        setRecipes(transformedRecipes);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching recipes:", err);
+        setError("Failed to load recipes. Please try again later.");
+        // Fallback to empty array if API fails
+        setRecipes([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   const toggleSubButtons = () => {
     setIsSubButtonsVisible(!isSubButtonsVisible);
@@ -103,17 +95,28 @@ const RecipeGallery = () => {
   };
 
   // Custom recipe list component that overrides the default navigation
-  const CustomRecipeList = ({ recipes }) => {
+  const CustomRecipeList = ({
+    recipes,
+  }: {
+    recipes: Array<{
+      id: string;
+      title: string;
+      cookTime: string;
+      servings: number;
+      description: string;
+      imageUrl: string;
+    }>;
+  }) => {
     const navigate = useNavigate();
 
-    const handleRecipeClick = () => {
-      navigate("/recipe/287ea1dd-4d38-44af-8513-4eab31c74796");
+    const handleRecipeClick = (id: string) => {
+      navigate(`/recipe/${id}`);
     };
 
     return (
       <div className="space-y-4 pb-8">
         {recipes.map((recipe) => (
-          <div key={recipe.id} onClick={handleRecipeClick}>
+          <div key={recipe.id} onClick={() => handleRecipeClick(recipe.id)}>
             <RecipeCard
               id={recipe.id}
               title={recipe.title}
@@ -201,7 +204,23 @@ const RecipeGallery = () => {
 
       <main className="flex-1 overflow-y-auto px-4 relative">
         <div className="max-w-3xl mx-auto">
-          <CustomRecipeList recipes={recipes} />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-gray-500">Loading recipes...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 p-4 rounded-md text-red-600 text-center">
+              {error}
+            </div>
+          ) : recipes.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">
+                No recipes found. Add your first recipe!
+              </p>
+            </div>
+          ) : (
+            <CustomRecipeList recipes={recipes} />
+          )}
         </div>
       </main>
 
