@@ -104,6 +104,24 @@ const RecipeDetails = () => {
         setIsLoading(true);
         const data = await getRecipe(id);
 
+        // Check if instructions is a flat array of strings or the expected nested format
+        let formattedInstructions = data.instructions;
+
+        // If instructions is a flat array of strings (not an array of objects with title and steps)
+        if (
+          Array.isArray(data.instructions) &&
+          data.instructions.length > 0 &&
+          typeof data.instructions[0] === "string"
+        ) {
+          // Transform it into the expected nested format with a placeholder title
+          formattedInstructions = [
+            {
+              title: "Step by step",
+              steps: data.instructions,
+            },
+          ];
+        }
+
         // Format the data to match our component's expected structure
         setRecipe({
           id: id,
@@ -113,7 +131,7 @@ const RecipeDetails = () => {
           description: data.description,
           imageUrl: data.image_url,
           ingredients: data.ingredients,
-          instructions: data.instructions,
+          instructions: formattedInstructions,
         });
         setIsLoading(false);
       } catch (err) {
